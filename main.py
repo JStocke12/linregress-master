@@ -20,13 +20,18 @@ class LinearRegression:
             slope = self.slope
         return np.sum((slope*self.xs-self.ys)**2)
 
-    def fit(self, slope=None, delta=(2**-10), learning=(2**-20)):
+    def fit(self, slope=None, delta=(2**-10), learning=1):
         if slope is None:
             slope = self.slope
-        for i in range(100):
+        for i in range(10000):
             gradient = (self.loss(slope+delta)-self.loss(slope-delta))/(2*delta)
-            slope -= gradient*learning
-            print(gradient)
+            if self.loss(slope) < self.loss(slope-gradient*learning)-delta**2:
+                learning /= 2
+            else:
+                slope -= gradient*learning
+            if gradient == 0:
+                break
+            print(learning)
         return slope
 
     def predict(self, xs):
@@ -44,7 +49,7 @@ def main():
     plt.plot(loss_xs,loss_ys)
     plt.show()
 
-    print(regression.fit(slope=4.9))
+    print(regression.fit())
 
     """plt.plot(adelie_bill_len_mm, adelie_flipper_len_mm, '.')
     plt.show()"""
