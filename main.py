@@ -31,7 +31,7 @@ class LinearRegression:
         for i in range(10000):
             slope_gradient = (self.loss(slope+delta, intercept)-self.loss(slope-delta, intercept))/(2*delta)
             intercept_gradient = (self.loss(slope, intercept + delta) - self.loss(slope, intercept - delta)) / (2 * delta)
-            if self.loss(slope, intercept) < self.loss(slope-slope_gradient*learning, slope-intercept_gradient*learning)-delta**2:
+            if self.loss(slope, intercept) < self.loss(slope-slope_gradient*learning, intercept-intercept_gradient*learning)-delta**2:
                 learning /= 2
             else:
                 slope -= slope_gradient*learning
