@@ -23,7 +23,7 @@ class LinearRegression:
             intercept = self.intercept
         return np.sum((slope*self.xs+intercept-self.ys)**2)
 
-    def fit(self, slope=None, intercept=None, delta=(2**-10), learning=1):
+    def fit(self, slope=None, intercept=None, delta=(2**-10), slope_learning=1, intercept_learning=1):
         if slope is None:
             slope = self.slope
         if intercept is None:
@@ -31,12 +31,15 @@ class LinearRegression:
         for i in range(10000):
             slope_gradient = (self.loss(slope+delta, intercept)-self.loss(slope-delta, intercept))/(2*delta)
             intercept_gradient = (self.loss(slope, intercept + delta) - self.loss(slope, intercept - delta)) / (2 * delta)
-            if self.loss(slope, intercept) < self.loss(slope-slope_gradient*learning, intercept-intercept_gradient*learning)-delta**2:
-                learning /= 2
+            if self.loss(slope, intercept) < self.loss(slope-slope_gradient*slope_learning, intercept)-delta**2:
+                slope_learning /= 2
             else:
-                slope -= slope_gradient*learning
-                intercept -= intercept_gradient*learning
-            if slope_gradient**2+intercept_gradient**2 < 0.01:
+                slope -= slope_gradient*slope_learning
+            if self.loss(slope, intercept) < self.loss(slope, intercept-intercept_gradient*intercept_learning)-delta**2:
+                intercept_learning /= 2
+            else:
+                intercept -= intercept_gradient*intercept_learning
+            if slope_gradient**2+intercept_gradient**2 < delta**2:
                 break
         self.slope = slope
         self.intercept = intercept
@@ -47,6 +50,8 @@ class LinearRegression:
 
     def data_plot(self):
         plt.scatter(self.xs,self.ys)
+        slope_intercept = self.fit()
+        plt.plot([slope_intercept[0]*i+slope_intercept[1] for i in range(50)])
         plt.show()
 
 
